@@ -8,6 +8,8 @@ export default function HomeScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [imageUri, setImageUri] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
+  const [imageBase64, setImageBase64] = useState('');
+
 
   useEffect(() => {
     (async () => {
@@ -32,7 +34,7 @@ export default function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.optionButton} onPress={() => setImageUri(null)}>
               <Text style={styles.text}>Retake</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('Items')}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('Items',{ imageBase64: imageBase64 })}>
               <Text style={styles.text}>Style Me</Text>
             </TouchableOpacity>
           </View>
@@ -44,8 +46,13 @@ export default function HomeScreen({ navigation }) {
               style={styles.captureButton}
               onPress={async () => {
                 if (cameraRef) {
-                  let photo = await cameraRef.takePictureAsync();
+                  let photo = await cameraRef.takePictureAsync({
+                    base64: true,
+                  });
                   setImageUri(photo.uri);
+                  const imageBase64 = photo.base64;
+                    // Assuming you have a state to hold the base64 string
+                  setImageBase64(imageBase64);
                 }
               }}>
               <Text style={styles.text}> Snap </Text>
