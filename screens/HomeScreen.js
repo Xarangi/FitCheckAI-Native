@@ -9,7 +9,7 @@ export default function HomeScreen({ navigation }) {
   const [imageUri, setImageUri] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
-
+  const [type, setType] = useState(Camera.Constants.Type.back); // Added state for camera type
 
   useEffect(() => {
     (async () => {
@@ -17,6 +17,14 @@ export default function HomeScreen({ navigation }) {
       setHasPermission(status === 'granted');
     })();
   }, []);
+
+  const toggleCameraType = () => { // Function to toggle the camera type
+    setType((current) =>
+      current === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back,
+    );
+  };
 
   if (hasPermission === null) {
     return <View />;
@@ -40,7 +48,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </>
       ) : (
-        <Camera style={styles.camera} type={Camera.Constants.Type.back} ref={(ref) => setCameraRef(ref)}>
+        <Camera style={styles.camera} type={type} ref={(ref) => setCameraRef(ref)}>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.captureButton}
@@ -50,12 +58,16 @@ export default function HomeScreen({ navigation }) {
                     base64: true,
                   });
                   setImageUri(photo.uri);
-                  const imageBase64 = photo.base64;
-                    // Assuming you have a state to hold the base64 string
-                  setImageBase64(imageBase64);
+                  setImageBase64(photo.base64);
                 }
               }}>
               <Text style={styles.text}> Snap </Text>
+            </TouchableOpacity>
+            {/* Button to toggle camera type */}
+            <TouchableOpacity
+              style={[styles.captureButton, { marginLeft: 20 }]} // Adjust style as needed
+              onPress={toggleCameraType}>
+              <Text style={styles.text}> Flip </Text>
             </TouchableOpacity>
           </View>
         </Camera>
