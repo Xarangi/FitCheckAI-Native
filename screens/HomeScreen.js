@@ -55,6 +55,7 @@ export default function HomeScreen({ navigation }) {
               onPress={async () => {
                 if (cameraRef) {
                   let photo = await cameraRef.takePictureAsync({
+                    quality: 0.75,
                     base64: true,
                   });
                   setImageUri(photo.uri);
